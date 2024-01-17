@@ -35,7 +35,13 @@ class Tile extends Cell {
 class Player extends Cell {
   constructor() {
     super("tileP");
+    // this.x = x;
+    // this.y = y;
   }
+  //   moveTo(x,y) {
+  //     this.x=x
+  //     this.y=y
+  //   }
 }
 class Enemy extends Cell {
   constructor() {
@@ -56,11 +62,92 @@ class AtackBoost extends Cell {
 class Game {
   constructor() {
     this.gameMap = [];
+    this.player = { x: 0, y: 0 };
+    this.movePlayer = this.movePlayer.bind(this);
+    this.moveEnemys = this.moveEnemys.bind(this);
+    this.gameLoop = this.gameLoop.bind(this);
+    this.keyDown = this.keyDown.bind(this);
+    this.keyUp = this.keyUp.bind(this);
+    this.playerDirection = "0";
+    this.enemys = [];
+    // this.player = new Player()
   }
   init() {
     this.generateMap();
     this.initActors();
     this.render();
+    document.addEventListener("keyup", this.keyUp);
+    document.addEventListener("keydown", this.keyDown);
+    setInterval(this.gameLoop, 1000 / 12);
+  }
+  gameLoop() {
+    this.movePlayer();
+    this.moveEnemys();
+    this.render();
+  }
+  keyUp(e) {
+    this.playerDirection = "0";
+  }
+  keyDown(e) {
+    this.playerDirection = e.key;
+  }
+  moveEnemys() {
+    console.log(this.enemys);
+    const newEnemys = [];
+    this.enemys.forEach((coords) => {
+      let newCoords = { x: 0, y: 0 };
+      const direction = getRandomInt(0, 4);
+      switch (direction) {
+        case 0:
+          newCoords = { x: coords.x, y: coords.y - 1 };
+          break;
+        case 1:
+          newCoords = { x: coords.x, y: coords.y + 1 };
+          break;
+        case 2:
+          newCoords = { x: coords.x - 1, y: coords.y };
+          break;
+        case 3:
+          newCoords = { x: coords.x + 1, y: coords.y };
+          break;
+      }
+      if (this.checkColl(newCoords.x, newCoords.y)) {
+        this.gameMap[coords.y][coords.x] = new Tile();
+        this.gameMap[newCoords.y][newCoords.x] = new Enemy();
+        newEnemys.push(newCoords);
+      } else {
+        newEnemys.push(coords);
+      }
+      this.enemys = newEnemys;
+    });
+  }
+  movePlayer() {
+    console.log(this.playerDirection);
+    let newCoords = { x: 0, y: 0 };
+    switch (this.playerDirection) {
+      case "w":
+        newCoords = { x: this.player.x, y: this.player.y - 1 };
+        break;
+      case "s":
+        newCoords = { x: this.player.x, y: this.player.y + 1 };
+        break;
+      case "a":
+        newCoords = { x: this.player.x - 1, y: this.player.y };
+        break;
+      case "d":
+        newCoords = { x: this.player.x + 1, y: this.player.y };
+        break;
+    }
+    if (this.checkColl(newCoords.x, newCoords.y)) {
+      this.gameMap[this.player.y][this.player.x] = new Tile();
+      this.player = newCoords;
+      this.gameMap[newCoords.y][newCoords.x] = new Player();
+    }
+  }
+  checkColl(x, y) {
+    if (x < 0 || x > config.mapSize.w - 1) return false;
+    if (y < 0 || y > config.mapSize.h - 1) return false;
+    return this.gameMap[y][x].cellType === "tile";
   }
   generateMap() {
     this.gameMap = Array.from(Array(config.mapSize.h), () =>
@@ -129,10 +216,12 @@ class Game {
     for (let i = 0; i < 10; i++) {
       const { x, y } = emptyCell.pop();
       this.gameMap[y][x] = new Enemy();
+      this.enemys.push({ x, y });
     }
     //put player
     const { x, y } = emptyCell.pop();
     this.gameMap[y][x] = new Player();
+    this.player = { x, y };
   }
   render() {
     // clear field
@@ -151,6 +240,7 @@ class Game {
       });
       field.appendChild(gameRow);
     });
+    // console.log(this.gameMap);
   }
 }
 const game = new Game();

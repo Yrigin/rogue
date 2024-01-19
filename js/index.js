@@ -51,10 +51,11 @@ class Tile extends Cell {
 }
 
 class Entity extends Cell {
-  constructor(cellType, x, y, health, attack) {
+  constructor(cellType, x, y, health, attack, moveHandler) {
     super(cellType, x, y);
     this._health = health;
     this._attack = attack;
+    this.moveHandler = moveHandler;
   }
   get attack() {
     return this._attack;
@@ -74,16 +75,34 @@ class Entity extends Cell {
   isAlive() {
     return this._health > 0;
   }
+  move(x, y) {
+    this.moveHandler(x, y);
+  }
 }
 
 class Player extends Entity {
-  constructor(x, y, health, attack) {
-    super("tileP", x, y, health, attack);
+  constructor(x, y, health, attack, moveHandler) {
+    super("tileP", x, y, health, attack, moveHandler);
   }
 }
 class Enemy extends Entity {
-  constructor(x, y, health, attack) {
-    super("tileE", x, y, health, attack);
+  constructor(x, y, health, attack, id, moveHandler, onDespawn) {
+    super("tileE", x, y, health, attack, moveHandler);
+    this._id = id;
+    this._onDespawn = onDespawn;
+    this.moveHandler = moveHandler;
+  }
+  get id() {
+    return this._id;
+  }
+  set id(id) {
+    this._id = id;
+  }
+  move(x, y) {
+    this.moveHandler(this.id, x, y);
+  }
+  despawn() {
+    this._onDespawn(this.id);
   }
 }
 class Boost extends Cell {
@@ -137,6 +156,10 @@ class Map {
     this.gameMap = [];
     this.player = null;
     this.enemys = [];
+
+    this.movePlayer = this.movePlayer.bind(this);
+    this.moveEnemy = this.moveEnemy.bind(this);
+    this.despawnEnemy = this.despawnEnemy.bind(this);
   }
   generate() {
     // заполняем все карту стенами
@@ -219,13 +242,21 @@ class Map {
     // put enemys
     for (let i = 0; i < 10; i++) {
       const { x, y } = emptyCells.pop();
-      const enemy = new Enemy(x, y, 100, 25);
+      const enemy = new Enemy(
+        x,
+        y,
+        100,
+        25,
+        i,
+        this.moveEnemy,
+        this.despawnEnemy
+      );
       this.gameMap[y][x] = enemy;
       this.enemys.push(enemy);
     }
     //put player
     const { x, y } = emptyCells.pop();
-    this.player = new Player(x, y, 100, 50);
+    this.player = new Player(x, y, 100, 50, this.movePlayer);
     this.gameMap[y][x] = this.player;
   }
   movePlayer(newX, newY) {
@@ -240,6 +271,14 @@ class Map {
     this.enemys[id].setPosition(newX, newY);
     this.gameMap[y][x] = new Tile(x, y);
     this.gameMap[newY][newX] = this.enemys[id];
+  }
+  despawnEnemy(id) {
+    const { x, y } = this.enemys[id];
+    this.gameMap[y][x] = new Tile(x, y);
+    this.enemys = this.enemys.filter((enemy) => enemy.id !== id);
+    this.enemys.forEach((enemy, id) => (enemy.id = id));
+
+    console.log(this.enemys);
   }
   cellInMap(x, y) {
     return x >= 0 && x < this.mapSize.w && y >= 0 && y < this.mapSize.h;
@@ -316,10 +355,16 @@ class Game {
       this.map.cellInMap(newX, newY) &&
       this.map.getCell(newX, newY).type !== "tileW"
     ) {
-      this.map.movePlayer(newX, newY);
+      if (this.map.getCell(newX, newY).type === "tileHP") {
+        player.health += 25;
+      }
+      player.move(newX, newY);
       this.map.getAroundEnity(newX, newY).forEach((entity) => {
         if (entity.type === "tileE") {
           entity.damage(100);
+          if (entity.health <= 0) {
+            entity.despawn();
+          }
         }
       });
     }
@@ -333,7 +378,7 @@ class Game {
         this.map.cellInMap(newX, newY) &&
         this.map.getCell(newX, newY).type === "tile"
       ) {
-        this.map.moveEnemy(id, newX, newY);
+        enemy.move(newX, newY);
         this.map.getAroundEnity(newX, newY).forEach((entity) => {
           if (entity.type === "tileP") {
             entity.damage(enemy.attack);
@@ -347,7 +392,8 @@ class Game {
     this.movePlayer(this.playerDirection);
     this.moveEnemys();
     // console.log(this.map.map);
-    this.render();
+    console.log(this.map.player.health);
+    // this.render();
   }
   keyUp() {
     this.playerDirection = directions.ZERO;
@@ -381,6 +427,8 @@ class Game {
         const elemDiv = document.createElement("div");
         elemDiv.className = `tile ${el.cellType}`;
         if (el.type === "tileP" || el.type === "tileE") {
+          // elemDiv.style.top = 25 * (el.y + 1);
+          // elemDiv.style.left = 25 * (el.x + 1);
           elemDiv.innerHTML = `<div class="health" style="width: ${el.health}%;"></div> `;
         }
 

@@ -22,13 +22,76 @@
     />
 
     <link href="css/style.css" rel="stylesheet" />
+    <link href="css/modal.css" rel="stylesheet" />
   </head>
   <body>
-    <h1>Игровое поле</h1>
-    <div class="field-box"><div class="field" id="field"></div></div>
-    <div class="cl"></div>
-    <!--h1>Инвентарь</h1>
-		<div class="inventory-box"><div class="inventory"></div></div-->
+    <header>
+      <h1>Игровое поле</h1>
+      <div class="header-item">
+        <span class="header-item-name"> Здоровье: </span>
+        <span class="header-item-value" id="player-health"></span>
+      </div>
+      <div class="header-item">
+        <span class="header-item-name"> Аттака: </span>
+        <span class="header-item-value" id="player-attack"></span>
+      </div>
+      <div class="header-item">
+        <span class="header-item-name"> CoolDown: </span>
+        <span class="header-item-value">
+          <div class="progress-radial" id="cooldown"></div>
+        </span>
+      </div>
+    </header>
+    <div class="View">
+      <div class="Page-game">
+        <div class="field-box"><div class="field" id="field"></div></div>
+      </div>
+      <div class="Modal Modal-start" id="modal-start">
+        <div class="Modal-box">
+          <div class="Modal-content">
+            <div class="Modal-header">
+              <h1>Настройки</h1>
+            </div>
+            <form>Хардкор: <input type="checkbox" id="hardcore" /></form>
+            <button id="start-game">Начать игру</button>
+          </div>
+        </div>
+      </div>
+      <div class="Modal Modal-win" id="modal-win">
+        <div class="Modal-box">
+          <div class="Modal-content">
+            <div class="Modal-header">
+              <h1>Вы победили!</h1>
+            </div>
+            <button class="modal-button-nextround">Начать новую игру</button>
+          </div>
+        </div>
+      </div>
+      <div class="Modal Modal-loss" id="modal-loss">
+        <div class="Modal-box">
+          <div class="Modal-content">
+            <div class="Modal-header">
+              <h1>Вы проиграли!</h1>
+            </div>
+            <button class="modal-button-nextround" id="next-r">
+              Начать новую игру
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="cl"></div>
+    <h1>Инвентарь</h1>
+    <div class="inventory-box">
+      <div class="inventory">
+        <div class="inventory-item">
+          <div class="tileHP"></div>
+          <span class="inventory-item-count"> 2</span>
+        </div>
+      </div>
+    </div> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
     <script src="js/index.js"></script>
   </body>
 </html>

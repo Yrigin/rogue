@@ -35,3 +35,9 @@ npm start
 ```
 
 ## Build
+
+```sh
+npm run build
+```
+
+Проект собирется в `dist/`

@@ -1,5 +1,7 @@
-// import { sounds } from "./sound";
+import { Howl } from "howler";
 
+import "../css/style.css";
+import "../css/modal.css";
 const directions = {
   LEFT: { x: -1, y: 0 },
   RIGHT: { x: +1, y: 0 },
@@ -516,7 +518,7 @@ class Game {
           tile.innerHTML = `<div class="health" style="width: ${el.health}%;"></div> `;
         }
 
-        gameRow.appendChild(elemDiv);
+        gameRow.appendChild(tile);
       });
 
       field.appendChild(gameRow);

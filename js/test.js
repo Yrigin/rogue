@@ -32,3 +32,4 @@ for (let i = 0; i < numRooms; i++) {
 
 // Выводим результат в консоль
 console.log(arr);
+//

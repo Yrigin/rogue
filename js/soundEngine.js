@@ -9,19 +9,19 @@ export class SoundEngine {
       src: backgroundMusic,
       loop: true,
       volume: 0.5,
-      preload: false,
+      html5: true,
     });
     this._bounce = new Howl({
       src: bounce,
-      preload: false,
+      html5: true,
     });
     this._shoot = new Howl({
       src: shoot,
-      preload: false,
+      html5: true,
     });
     this._explosion = new Howl({
       src: explosion,
-      preload: false,
+      html5: true,
     });
   }
   init() {

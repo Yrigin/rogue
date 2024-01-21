@@ -111,20 +111,20 @@ export class Game {
   }
 
   keyDown(e) {
-    switch (e.key) {
-      case 'w':
+    switch (e.keyCode) {
+      case 87:
         this.playerDirection = directions.UP;
         break;
-      case 's':
+      case 83:
         this.playerDirection = directions.DOWN;
         break;
-      case 'a':
+      case 65:
         this.playerDirection = directions.LEFT;
         break;
-      case 'd':
+      case 68:
         this.playerDirection = directions.RIGHT;
         break;
-      case ' ':
+      case 32:
         this.playerAttack = true;
     }
     console.log(this.playerDirection);

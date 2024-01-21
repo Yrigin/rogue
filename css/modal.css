@@ -31,3 +31,7 @@
   /* width: 80%; */
   height: 30px;
 }
+.header-item {
+  display: flex;
+  align-items: center;
+}

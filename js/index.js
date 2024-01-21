@@ -1,5 +1,6 @@
 import '../css/style.css';
 import '../css/modal.css';
+import '../css/game.css';
 import { Game } from './game';
 
 const normalConfig = {

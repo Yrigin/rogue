@@ -1,7 +1,7 @@
-import backgroundMusic from '../sounds/music.wav';
+import backgroundMusic from '../sounds/music.mp3';
 import bounce from '../sounds/bounce.mp3';
-import shoot from '../sounds/shoot.wav';
-import explosion from '../sounds/explosion.wav';
+import shoot from '../sounds/shoot.mp3';
+import explosion from '../sounds/explosion.mp3';
 import { Howl } from 'howler';
 export class SoundEngine {
   constructor() {
@@ -9,27 +9,27 @@ export class SoundEngine {
       src: backgroundMusic,
       loop: true,
       volume: 0.5,
-      html5: true,
+      // preload: false,
     });
     this._bounce = new Howl({
       src: bounce,
-      html5: true,
+      // preload: false,
     });
     this._shoot = new Howl({
       src: shoot,
-      html5: true,
+      // preload: false,
     });
     this._explosion = new Howl({
       src: explosion,
-      html5: true,
+      // preload: false,
     });
   }
-  init() {
-    this._music.load();
-    this._bounce.load();
-    this._shoot.load();
-    this._explosion.load();
-  }
+  // init() {
+  //   this._music.load();
+  //   this._bounce.load();
+  //   this._shoot.load();
+  //   this._explosion.load();
+  // }
   playMusic() {
     this._music.play();
   }

@@ -24,8 +24,7 @@ export class Game {
     this.render = this.render.bind(this);
   }
   init() {
-    this.soundEngine.init();
-    this.soundEngine.playMusic();
+    // await this.soundEngine.init();
     this.map.generate();
     this.map.spawnEntity();
     this.render();
@@ -33,6 +32,7 @@ export class Game {
     document.addEventListener('keyup', this.keyUp);
     document.addEventListener('keydown', this.keyDown);
     this.gameLoopInterval = setInterval(this.gameLoop, this.gameSpeed);
+    this.soundEngine.playMusic();
   }
   movePlayer(direction) {
     const player = this.map.player;
